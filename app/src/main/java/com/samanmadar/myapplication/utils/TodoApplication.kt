@@ -4,9 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import com.samanmadar.myapplication.feature_todolist.data.TaskRepositoryImplementation
 import com.samanmadar.myapplication.feature_todolist.domain.repository.TaskRepository
-import com.samanmadar.myapplication.feature_todolist.presentation.screen_add_task.AddTaskViewModel
-import com.samanmadar.myapplication.feature_todolist.presentation.screen_show_tasks.ShowTasksViewModel
-import com.samanmadar.myapplication.feature_todolist.presentation.screen_show_tasks.TaskAdapter
+import com.samanmadar.myapplication.feature_todolist.presentation.TodoListViewModel
 import com.samanmadar.myapplication.utils.database.TaskDao
 import com.samanmadar.myapplication.utils.database.TodoListDatabase
 import org.koin.android.ext.koin.androidContext
@@ -37,10 +35,7 @@ class TodoApplication:Application() {
         }
         val viewModelsModule = module {
             viewModel {
-                ShowTasksViewModel(get())
-            }
-            viewModel {
-                AddTaskViewModel(get())
+                TodoListViewModel(get())
             }
         }
         startKoin {

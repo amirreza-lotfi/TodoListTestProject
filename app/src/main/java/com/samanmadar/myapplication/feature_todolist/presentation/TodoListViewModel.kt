@@ -1,4 +1,4 @@
-package com.samanmadar.myapplication.feature_todolist.presentation.screen_add_task
+package com.samanmadar.myapplication.feature_todolist.presentation
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,20 +7,30 @@ import androidx.lifecycle.viewModelScope
 import com.samanmadar.myapplication.feature_todolist.domain.model.Task
 import com.samanmadar.myapplication.feature_todolist.domain.repository.TaskRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AddTaskViewModel(
+class TodoListViewModel(
     private val taskRepository: TaskRepository,
-):ViewModel() {
-    private val _title = MutableLiveData("")
+): ViewModel() {
+    private val _tasks = MutableStateFlow<List<Task>>( listOf())
+    val tasks: StateFlow<List<Task>> = _tasks
 
-    private val _taskDetail = MutableLiveData("")
+    init {
+        getTasks()
+    }
 
-
-    fun addTask(doAfterSave:()->Unit){
+    private fun getTasks(){
         viewModelScope.launch(Dispatchers.IO){
-            val newTask = Task(0,_title.value ?: "",_taskDetail.value ?: "",System.currentTimeMillis())
+            _tasks.value = taskRepository.getAllTasks()
+        }
+    }
+
+    fun addTask(title:String, taskTitle:String, doAfterSave:()->Unit){
+        viewModelScope.launch(Dispatchers.IO){
+            val newTask = Task(0,title,taskTitle,System.currentTimeMillis())
             taskRepository.addTask(newTask)
             withContext(Dispatchers.Main){
                 doAfterSave()
@@ -29,7 +39,4 @@ class AddTaskViewModel(
 
     }
 
-
-    fun setTaskTitle(value:String) = run { _title.value = value }
-    fun setTaskDetail(value:String) = run { _taskDetail.value = value }
 }
